@@ -1,0 +1,58 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: capstone-upgrad
+  region: us-east-1
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: aws-load-balancer-controller
+      namespace: kube-system
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+  - metadata:
+      name: cluster-autoscaler
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    wellKnownPolicies:
+      autoScaler: true
+
+vpc:
+  id: "vpc-0c761c65b63a60471"
+  subnets:
+    public:
+      public-1:
+          id: "subnet-073ecbc21bff1d8f3"
+      public-3:
+          id: "subnet-069a8bd3d806aba0a"
+    private:
+      private-2:
+          id: "subnet-06c3a98e73963d7f8"
+      private-4:
+          id: "subnet-093a11322403de920" 
+
+nodeGroups:
+  - name: ng-public
+    instanceType: t2.medium
+    tags:
+      # EC2 tags required for cluster-autoscaler auto-discovery
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/capstone-upgrad: "owned"
+    desiredCapacity: 1
+    subnets:
+      - public-1
+      - public-3
+  - name: ng-private
+    privateNetworking: true
+    instanceType: t2.medium
+    tags:
+      # EC2 tags required for cluster-autoscaler auto-discovery
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/capstone-upgrad: "owned"
+    desiredCapacity: 1
+    subnets:
+      - private-2
+      - private-4
