@@ -94,3 +94,9 @@
   -n kube-system \
   cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.0
   ```
+
+
+## Task2
+
+  - Create namespace, `kubectl create ns demo`
+  - apply changes with `kubectl apply -f <filename>`
