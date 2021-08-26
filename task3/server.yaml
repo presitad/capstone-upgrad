@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    name: web
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-server
+spec:
+  selector:
+    matchLabels:
+      app: redis # has to match .spec.template.metadata.labels
+  serviceName: "redis-server"
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: redis # has to match .spec.selector.matchLabels
+    spec:
+      containers:
+      - name: redis
+        image: redis:latest
+        ports:
+        - containerPort: 6379
+          name: web
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "200mi"
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/redis
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "local-storage"
+      resources:
+        requests:
+          storage: 1Mi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage
+  # hostPath:
+  #   path: "/mnt/data"
+  
