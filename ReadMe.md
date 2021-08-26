@@ -99,4 +99,13 @@
 ## Task2
 
   - Create namespace, `kubectl create ns demo`
-  - apply changes with `kubectl apply -f <filename>`
+  - apply changes with `kubectl apply -f k8s-template/<filename>`
+
+## Task3
+  - apply changes with `kubectl apply -f task3/<filename>`
+  - Get redis-cli pod name and exec into this pod
+  - Follow steps in subtask3.
+  - Restart redis-server-0 pod
+  - Get value for key in above step.
+
+## Task4
