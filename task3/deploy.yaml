@@ -1,0 +1,24 @@
+# Source: redis-cli/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cli
+  labels:
+    app.kubernetes.io/name: redis-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis-cli      
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: redis-cli
+    spec:
+      containers:
+        - name: redis
+          image: "redis:latest"
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh"]
+          args: ["-c", "sleep 100000"]
+          
